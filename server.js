@@ -6,6 +6,7 @@
 // ตัวแปรแวดล้อม
 //   PORT         พอร์ต (บริการ hosting ตั้งให้เอง)
 //   API_KEY      รหัสสำหรับ API ที่สั่งเกม (POST) — ถ้าไม่ตั้ง POST ทั้งหมดจะถูกปิด
+//   ADMIN_PASSWORD  รหัสแอดมินในเกม (ใช้สั่งเอฟเฟกต์ทั้งงานจากแผงแอดมิน)
 //   MAX_CLIENTS  จำนวนผู้เล่นพร้อมกันสูงสุด (ค่าเริ่มต้น 300)
 //   DATA_FILE    ไฟล์เก็บยอดรวม (ค่าเริ่มต้น data.json ข้างไฟล์นี้)
 
@@ -16,6 +17,7 @@ const { WebSocketServer } = require('ws');
 
 const PORT = +process.env.PORT || 3000;
 const API_KEY = process.env.API_KEY || '';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
 const MAX_CLIENTS = +process.env.MAX_CLIENTS || 300;
 const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'data.json');
 const MAX_BYTES = 4096, MAX_MSG_PER_SEC = 30;
@@ -101,8 +103,11 @@ function readJson(req) {
 }
 const postHits = new Map();
 function guard(req, res) {
-  if (!API_KEY) { send(res, 403, { error: 'ยังไม่ได้ตั้ง API_KEY บนเซิร์ฟเวอร์' }); return false; }
-  if (req.headers['x-api-key'] !== API_KEY) { send(res, 401, { error: 'API key ไม่ถูกต้อง' }); return false; }
+  const adminOk = ADMIN_PASSWORD && req.headers['x-admin-password'] === ADMIN_PASSWORD;
+  if (!adminOk) {
+    if (!API_KEY) { send(res, 403, { error: 'ยังไม่ได้ตั้ง API_KEY บนเซิร์ฟเวอร์' }); return false; }
+    if (req.headers['x-api-key'] !== API_KEY) { send(res, 401, { error: 'API key ไม่ถูกต้อง' }); return false; }
+  }
   const ip = req.socket.remoteAddress || '', now = Date.now(), h = postHits.get(ip) || [];
   const recent = h.filter(t => now - t < 10000); recent.push(now); postHits.set(ip, recent);
   if (recent.length > 20) { send(res, 429, { error: 'เรียกถี่เกินไป (สูงสุด 20 ครั้งต่อ 10 วินาที)' }); return false; }
