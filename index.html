@@ -616,6 +616,7 @@ function myAction(a,wish,pos){myAct={i:++mySeq,a,t:wish||'',x:+pos.x.toFixed(2),
 function totals(){let k=0,l=0,ppl=0;
  if(roomOn&&room){for(const p of room.peers()){const s=p.presence||{};if(!s.nm)continue;ppl++;if(p.sameTab)continue;k+=num(s.n,0,9999,0);l+=num(s.l,0,9999,0)}if(player&&!room.peers().some(p=>p.sameTab&&p.presence&&p.presence.nm))ppl++}
  else ppl=player?1:0;
+ if(srvTot)return{k:Math.max(srvTot.k,k+sessK)+ST.k,l:Math.max(srvTot.l,l+sessL)+ST.l,ppl};
  return{k:k+sessK+ST.k,l:l+sessL+ST.l,ppl}}
 class Remote extends Actor{
  constructor(peer,s){super({type:'player',viewer:true,user:cleanName(String(s.nm)),seed:num(s.c,1,2e9,1)|0,from:V(num(s.x,-45,45,0),0,num(s.z,-40,18,0))});this.peer=peer;this.st=s;this.lastI=s.w&&s.w.i;this.face=num(s.f,-7,7,0)}
@@ -644,7 +645,7 @@ $('#joinBox').addEventListener('submit',e=>{e.preventDefault();const n=cleanName
  myName=n;store.set('name',n);$('#joinBox').classList.add('hidden');try{$('#joinName').blur()}catch(_){}audioInit();if(player){player.dispose();player=null}setPlay(true);try{canvas.focus()}catch(_){}});
 $('#joinWatch').onclick=()=>{$('#joinBox').classList.add('hidden');setPlay(false)};
 /* WebSocket room: same calls as Claude's room, for a self-hosted server (server.js) */
-function wsRoom(url){let ws=null,me=null,on=false,pend=null,snap=Object.freeze([]);const mine={},pm=new Map(),hs=[],cs=[];
+function wsRoom(url,onExtra){let ws=null,me=null,on=false,pend=null,snap=Object.freeze([]);const mine={},pm=new Map(),hs=[],cs=[];
  const mkP=(id,pr,isMe)=>Object.freeze({peer:id,by:null,isMe,sameTab:isMe,kind:'viewer',guest:false,presence:Object.freeze(Object.assign({},pr&&typeof pr==='object'?pr:{})),updatedAt:Date.now()});
  const fire=(j,u,l)=>{snap=Object.freeze([...pm.values()]);const c={peers:snap,joined:j,left:l,updated:u};for(const h of hs)try{h(c)}catch(e){}};
  const setOn=v=>{if(on!==v){on=v;for(const h of cs)try{h(v)}catch(e){}}};
@@ -654,15 +655,20 @@ function wsRoom(url){let ws=null,me=null,on=false,pend=null,snap=Object.freeze([
    if(m.t==='hello'){me=String(m.id);const left=[...pm.values()].filter(x=>!x.isMe);pm.clear();pm.set(me,mkP(me,mine,true));const j=[pm.get(me)];
     for(const x of Array.isArray(m.peers)?m.peers:[]){const id=String(x.id);if(id===me)continue;const pp=mkP(id,x.presence,false);pm.set(id,pp);j.push(pp)}setOn(true);fire(j,[],left);send()}
    else if(m.t==='p'){const id=String(m.id);if(id===me)return;const had=pm.has(id),pp=mkP(id,m.presence,false);pm.set(id,pp);had?fire([],[pp],[]):fire([pp],[],[])}
-   else if(m.t==='leave'){const id=String(m.id),x=pm.get(id);if(x&&!x.isMe){pm.delete(id);fire([],[],[x])}}};
+   else if(m.t==='leave'){const id=String(m.id),x=pm.get(id);if(x&&!x.isMe){pm.delete(id);fire([],[],[x])}}
+   else if(onExtra)try{onExtra(m)}catch(e){}};
   ws.onclose=()=>{setOn(false);const left=[...pm.values()].filter(x=>!x.isMe);for(const x of left)pm.delete(x.peer);if(left.length)fire([],[],left);setTimeout(connect,3000)}}
  connect();
  return{presence(patch){for(const k in patch){if(patch[k]===null)delete mine[k];else mine[k]=patch[k]}if(me){pm.set(me,mkP(me,mine,true));snap=Object.freeze([...pm.values()])}
    if(!pend)pend=setTimeout(()=>{pend=null;send()},60);return Promise.resolve()},
   peers:()=>snap,onPeers(h){hs.push(h);return()=>{}},onConnection(h){cs.push(h);setTimeout(()=>h(on),0);return()=>{}},connected:()=>on}}
-let roomKind='claude',lastPpl=-1;
+let roomKind='claude',lastPpl=-1,srvTot=null;
 (async()=>{await 0;let r=null;const srv=(()=>{try{return new URLSearchParams(location.search).get('server')}catch(e){return null}})()||window.LK_SERVER||S.server;
- if(srv&&/^wss?:\/\//.test(srv)){roomKind='ws';try{r=wsRoom(srv)}catch(e){r=null}}
+ if(srv&&/^wss?:\/\//.test(srv)){roomKind='ws';try{r=wsRoom(srv,m=>{
+  if(m.t==='totals'){srvTot={k:num(m.k,0,1e9,0)|0,l:num(m.l,0,1e9,0)|0};updateStats()}
+  else if(m.t==='cmd')command(String(m.user||''),String(m.text||''),{platform:'api'});
+  else if(m.t==='gift')gift(String(m.user||''),String(m.gift||''),m.count|0,{platform:'api'});
+  else if(m.t==='fx'&&['fireworks','petals','goldrain','lanterns'].includes(m.fx))runFx(m.fx,'',false)})}catch(e){r=null}}
  else{try{if(window.claude&&typeof claude.use==='function')r=await claude.use('room')}catch(e){r=null}}room=r;
  if(!room){roomOn=false;renderStatus();netMsg();return}
  room.onConnection(c=>{roomOn=c;if(c)lastPres='';renderStatus();updateStats();netMsg()},()=>{roomOn=false;for(const id of[...remotes.keys()])dropRemote(id);renderStatus();updateStats();netMsg()});

@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: loy-krathong-online
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: API_KEY
+        generateValue: true
