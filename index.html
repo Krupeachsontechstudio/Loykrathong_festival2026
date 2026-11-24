@@ -423,7 +423,23 @@ const isPier=(x,z)=>(Math.abs(x)<1.5&&z>5&&z<13.5)||(Math.abs(x)<3.2&&z>=13.5&&z
  mk(G.box,M(0xe8dccb),[3.4,.5,2.4],[0,.25,0],g);for(const x of[-1.4,1.4])for(const z of[-1,1])mk(G.cyl,red,[.1,2.2,.1],[x,1.6,z],g);
  const r=prism(4,1.6,3,red);r.position.y=2.7;g.add(r);const r2=prism(3.2,.9,3.06,gold);r2.position.y=2.75;r2.position.z=-.02;r2.scale.z=.02;r2.position.z=-1.55;g.add(r2);
  mk(G.box,gold,[.9,.5,.6],[0,.75,.3],g);for(let i=-2;i<=2;i++){mk(G.cyl,B(0xfff3d0),[.04,.25,.04],[i*.25,.62,-.6],g);at(glow(0xffb347,.55),i*.25,.82,-.6,g)}
- at(glow(0xffc070,5,.5),0,1.5,0,g)}
+ /* Buddha image on a tiered altar (โต๊ะหมู่บูชา), facing the visitors at -z */
+ {const bg=M(0xd9a83a,{emissive:0x2a1a04,metalness:.6,roughness:.35}),lot=M(0xf6b6cf,{emissive:0x3a1020}),zs=.42,y0=1.25;
+  mk(G.box,gold,[.75,.25,.5],[0,1.125,zs],g);mk(G.box,red,[1.2,1.35,.06],[0,1.85,.74],g);mk(G.box,gold,[1.28,.06,.08],[0,2.55,.74],g);
+  mk(G.cyl,bg,[.3,.09,.3],[0,y0+.05,zs],g);for(let i=0;i<12;i++){const a=i/12*Math.PI*2,pt=mk(G.cone,lot,[.07,.16,.04],[Math.cos(a)*.3,y0+.06,zs+Math.sin(a)*.3],g);pt.rotation.z=-Math.cos(a)*.6;pt.rotation.x=Math.sin(a)*.6}
+  mk(G.sph,bg,[.31,.12,.24],[0,y0+.17,zs],g);
+  mk(new THREE.CylinderGeometry(.14,.21,.42,16),bg,[1,1,1],[0,y0+.43,zs],g);
+  for(const x of[-1,1]){const arm=mk(G.sph,bg,[.06,.17,.07],[x*.19,y0+.42,zs-.03],g);arm.rotation.z=x*.25}
+  mk(G.sph,bg,[.13,.05,.09],[0,y0+.25,zs-.17],g);
+  const sash=mk(G.box,bg,[.06,.44,.03],[.06,y0+.45,zs-.14],g);sash.rotation.z=-.45;
+  mk(G.cyl,bg,[.05,.06,.05],[0,y0+.67,zs],g);mk(G.sph,bg,[.12,.13,.12],[0,y0+.79,zs],g);
+  for(const x of[-1,1])mk(G.sph,bg,[.025,.07,.03],[x*.12,y0+.74,zs],g);
+  const hairM=M(0x8a6418,{emissive:0x140c02,metalness:.5,roughness:.5}),dk=B(0x5a3a0a);const hc=mk(new THREE.SphereGeometry(.127,18,10,0,Math.PI*2,0,Math.PI*.4),hairM,[1,1.05,1],[0,y0+.79,zs+.005],g);hc.rotation.x=.18;
+  for(const x of[-1,1])mk(G.box,dk,[.04,.007,.01],[x*.045,y0+.785,zs-.122],g);mk(G.box,dk,[.03,.006,.01],[0,y0+.735,zs-.122],g);
+  mk(G.sph,hairM,[.065,.055,.065],[0,y0+.92,zs],g);mk(G.cone,bg,[.035,.16,.035],[0,y0+1.03,zs],g);
+  at(glow(0xffe6a0,1.1,.28),0,y0+.82,zs+.14,g);at(glow(0xffd070,2.2,.12),0,y0+.6,zs+.25,g);
+  for(const x of[-.34,.34]){mk(G.cyl,gold,[.05,.18,.05],[x,1.34,zs-.12],g);mk(G.sph,M(0xffd36b,{emissive:0x5a3a00}),[.07,.07,.07],[x,1.48,zs-.12],g)}}
+ at(glow(0xffc070,5,.22),0,1.2,-.6,g)}
 
 /* market stalls */
 const STALLS=[];
