@@ -749,7 +749,7 @@ function doAct(next){const c=ctxAct();if(!c)return;audioInit();const P=player;
  askWish(T,wish=>{
   if(c[0]==='float')P.steps=[{wait:1.4,start:a=>{a.face=0;a.pose='kneel';a.say(wish||'ลอยกระทง',8)},end:a=>{const[k,q]=a.drop();q.y=-.2;q.z=Math.max(q.z+1.2,18.4);floatKrathong(k,q);sfx('splash');count('k',a);myAction('float',wish,q,k.userData.kt);if(HH.role==='l')heartBurst(q);focus(k,[5,2.1,.5],5.5,[0,.2,0],3)}},
    {wait:1.8,start:a=>a.pose='wai',end:a=>{a.pose='idle';toast('ลอยกระทงแล้ว ไปเลือกกระทงใบใหม่ได้ที่ร้านกระทง')}}];
-  else if(c[0]==='lantern')P.steps=[{wait:.5,start:a=>{a.face=0;a.hold(makeLantern())}},{wait:1.6,start:a=>{a.pose='lift';a.say(wish||'ปล่อยโคม',8)},end:a=>{const[l,q]=a.drop();releaseLantern(l,q);sfx('whoosh');count('l',a);myAction('lantern',wish,q);focus(l,[-2,1.2,-7],6,[0,1,0],3)}},{wait:1.4,start:a=>a.pose='wai',end:a=>a.pose='idle'}];
+  else if(c[0]==='lantern')P.steps=[{wait:.5,start:a=>{a.face=0;a.hold(makeLantern())}},{wait:1.6,start:a=>{a.pose='lift';a.say(wish||'ปล่อยโคม',8)},end:a=>{const[l,q]=a.drop();releaseLantern(l,q);sfx('whoosh');count('l',a);myAction('lantern',wish,q);if(HH.role==='l')heartBurst(V(q.x,0,q.z));focus(l,[-2,1.2,-7],6,[0,1,0],3)}},{wait:1.4,start:a=>a.pose='wai',end:a=>a.pose='idle'}];
   else P.steps=[{wait:4.5,start:a=>{a.face=0;a.pose='wai';a.say(wish||'อธิษฐาน',8);sfx('chime');const gl=glow(0xffe6a0,2.6,.8);gl.position.set(0,1.4,.2);a.g.add(gl);a.sp=gl;count('w',a);myAction('pray',wish,a.g.position)},end:a=>{a.pose=a.prop?'hold':'idle';a.g.remove(a.sp)}}]})}
 const ring=new THREE.Mesh(new THREE.TorusGeometry(.9,.07,8,40),new THREE.MeshBasicMaterial({color:0xffd36b}));ring.rotation.x=Math.PI/2;scene.add(ring);
 const ringG=glow(0xffd36b,3.2,.55);scene.add(ringG);
@@ -793,18 +793,19 @@ function fwTargets(i){if(fwTg[i])return fwTg[i];const W=720,H=140,c=document.cre
  g.fillStyle='#fff';g.font='700 96px Mitr, Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(FWMSG[i].t,W/2,H/2+4,W-40);
  const d=g.getImageData(0,0,W,H).data,out=[];for(let y=0;y<H;y+=3)for(let x=0;x<W;x+=3)if(d[(y*W+x)*4+3]>110)out.push(-(x-W/2)*.052,-(y-H/2)*.052);
  return fwTg[i]=new Float32Array(out)}
-function textFirework(i,from,mine){i=Math.max(0,Math.min(2,i|0));const rk=glow(FWMSG[i].c,1.4,1,false);rk.position.set(from.x,1,from.z);scene.add(rk);sfx('whoosh');
- PS.push({rocket:rk,from:rk.position.clone(),t:0,life:1.2,cb:()=>{
-  const tg=fwTargets(i),n=tg.length/2,pos=new Float32Array(n*3);for(let k=0;k<n;k++){pos[k*3]=FWP.x;pos[k*3+1]=FWP.y;pos[k*3+2]=FWP.z}
+function textFirework(i,from,mine,off){const C=FWP.clone();if(off)C.y-=8.5;i=Math.max(0,Math.min(2,i|0));const rk=glow(FWMSG[i].c,1.4,1,false);rk.position.set(from.x,1,from.z);scene.add(rk);sfx('whoosh');
+ PS.push({rocket:rk,c:C,from:rk.position.clone(),t:0,life:1.2,cb:()=>{
+  const tg=fwTargets(i),n=tg.length/2,pos=new Float32Array(n*3);for(let k=0;k<n;k++){pos[k*3]=C.x;pos[k*3+1]=C.y;pos[k*3+2]=C.z}
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
   const pts=new THREE.Points(geo,new THREE.PointsMaterial({color:FWMSG[i].c,size:.75,map:GT,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,fog:false,toneMapped:false}));scene.add(pts);
-  PS.push({txt:pts,tg,t:0,life:7,jit:Float32Array.from({length:n},()=>Math.random())});firework(FWP.x,FWP.y,FWP.z,FWMSG[i].c);
-  if(mine){const o=new THREE.Object3D();o.position.copy(FWP);scene.add(o);focus(o,[0,-19,-34],6.5,[0,0,0],3);setTimeout(()=>scene.remove(o),8000)}}})}
-function openFw(){if(!player)return;wishOpen=true;tgt=null;player.face=0;$('#fwBox').classList.remove('hidden')}
+  PS.push({txt:pts,c:C,tg,t:0,life:7,jit:Float32Array.from({length:n},()=>Math.random())});firework(C.x,C.y,C.z,FWMSG[i].c);
+  if(mine){const o=new THREE.Object3D();o.position.copy(C);scene.add(o);focus(o,[0,-19,-34],6.5,[0,0,0],3);setTimeout(()=>scene.remove(o),8000)}}})}
+let fwPair=null;
+function openFw(pairName){if(!player)return;fwPair=pairName||null;$('#fwBox h3').textContent=fwPair?'จุดพลุคู่กับ '+fwPair+' 💕':'จุดพลุตัวอักษร';wishOpen=true;tgt=null;player.face=0;$('#fwBox').classList.remove('hidden')}
 function closeFw(){$('#fwBox').classList.add('hidden');wishOpen=false}
-function launchFw(i){closeFw();const now=performance.now();if(now<fwNext){toast('รอพลุลูกก่อนหน้าก่อนนะ');return}fwNext=now+7000;audioInit();
- player.steps=[{wait:.9,start:a=>{a.face=0;a.pose='lift';a.say('จุดพลุ "'+FWMSG[i].t+'" 🎆',4)},end:a=>{a.pose=a.prop?'hold':'idle';const from=V(7,0,6);textFirework(i,from,true);
-  myAction('fw','',from,i+1);feedAdd(myName+' (คุณ)','จุดพลุ "'+FWMSG[i].t+'" 🎆')}}]}
+function launchFw(i){closeFw();const pair=fwPair;fwPair=null;const now=performance.now();if(now<fwNext){toast('รอพลุลูกก่อนหน้าก่อนนะ');return}fwNext=now+7000;audioInit();
+ player.steps=[{wait:.9,start:a=>{a.face=0;a.pose='lift';a.say('จุดพลุ "'+FWMSG[i].t+'" 🎆',4)},end:a=>{a.pose=a.prop?'hold':'idle';const from=pair?a.g.position.clone():V(7,0,6);textFirework(i,from,!pair,!!pair);
+  myAction('fw','',from,i+1);if(pair){myAct.o=1;heartBurst(from);feedAdd('💕 '+myName+' & '+pair,'จุดพลุคู่กัน "'+FWMSG[i].t+'"')}else{if(HH.role==='l')heartBurst(from);feedAdd(myName+' (คุณ)','จุดพลุ "'+FWMSG[i].t+'" 🎆')}}}]}
 const SPK=p=>particles(70,0xffe6a0,(i,a,v)=>{a[i*3]=p.x+rnd(-.5,.5);a[i*3+1]=p.y+rnd(0,2);a[i*3+2]=p.z+rnd(-.5,.5);v[i*3]=rnd(-.6,.6);v[i*3+1]=rnd(.5,2);v[i*3+2]=rnd(-.6,.6)},{size:.3,life:1.6,grav:1,drag:.97});
 let wardG='f',showT=0,hidOcc=false,CD=7.2;
 function openWardrobe(){if(!player)return;wishOpen=true;tgt=null;player.face=0;const cur=player.o||'';if(cur)wardG=cur[0];renderWard();$('#wardBox').classList.remove('hidden')}
@@ -857,6 +858,9 @@ function answerInvite(ok){$('#invBox').classList.add('hidden');const f=invFrom;i
 function pairFloat(wish,partnerName){const P=player;if(!P||!P.prop||P.prop.userData.kind!=='k')return;
  P.steps=[{wait:1.4,start:a=>{a.pose='kneel';a.say(wish||'ลอยกระทงคู่กัน 💕',8)},end:a=>{const[k,q]=a.drop();q.y=-.2;q.z=Math.max(q.z+1.2,18.4);floatKrathong(k,q);sfx('splash');count('k',a);
   myAction('float',wish,q,k.userData.kt);heartBurst(q);feedAdd('💕 '+myName+' & '+partnerName,'ลอยกระทงคู่กัน')}},{wait:1.8,start:a=>a.pose='wai',end:a=>{a.pose='idle'}}]}
+function pairLantern(wish,nm){const P=player;if(!P)return;
+ P.steps=[{wait:1.6,start:a=>{a.face=0;a.pose='lift';a.say(wish||'ปล่อยโคมคู่กัน 💕',8)},end:a=>{const q=a.g.position.clone();q.y=2.3;releaseLantern(makeLantern(),q);sfx('whoosh');count('l',a);
+  myAction('lantern',wish,q);myAct.pr=1;heartBurst(V(q.x,0,q.z));feedAdd('💕 '+myName+' & '+nm,'ปล่อยโคมคู่กัน')}},{wait:1.4,start:a=>a.pose='wai',end:a=>{a.pose=a.prop?'hold':'idle'}}]}
 function heartBurst(c){particles(90,0xff5fa8,(i,a,v)=>{a[i*3]=c.x+rnd(-.6,.6);a[i*3+1]=.4+rnd(0,.6);a[i*3+2]=c.z+rnd(-.6,.6);v[i*3]=rnd(-.5,.5);v[i*3+1]=rnd(1.2,2.6);v[i*3+2]=rnd(-.5,.5)},{size:.45,life:2.2,grav:.4,drag:.98})}
 function myAction(a,wish,pos,kt){myAct={i:++mySeq,a,t:wish||'',x:+pos.x.toFixed(2),z:+pos.z.toFixed(2),kt:kt||0};if(a!=='photo'&&a!=='fw'&&a!=='take')feedAdd(myName+' (คุณ)',(a==='float'&&kt?KT[kt-1].n:ACT[a==='float'?'krathong':a])+(wish?' · '+wish:''));lastPres=''}
 function totals(){let k=0,l=0,ppl=0;
@@ -873,9 +877,10 @@ class Remote extends Actor{
   if(w.a==='float'){kp();const kt=num(w.kt,1,5,1)|0;floatKrathong(makeKrathong(false,kt),V(x,-.2,Math.max(z,18.2)));sfx('splash');this.say(t||'ลอยกระทง',8);feedAdd(this.user,KT[kt-1].n+(t?' · '+t:''));
    if(this.peer===HH.peer&&player&&player.prop&&player.prop.userData.kind==='k'&&!player.steps.length&&!wishOpen){const nm=this.user;askWish('ลอยกระทงคู่กับ '+nm+' 💕',wish=>pairFloat(wish,nm))}}
   else if(w.a==='take'){if(this.peer===HH.peer&&HH.role==='f'&&player&&!player.prop&&!player.steps.length&&!wishOpen){toast(this.user+' เลือกกระทงแล้ว เลือกของคุณด้วยนะ');openKChooser(kt=>{player.hold(makeKrathong(false,kt));sfx('chime')})}}
-  else if(w.a==='fw'){const fi=(num(w.kt,1,3,1)|0)-1;textFirework(fi,V(x,0,z),false);feedAdd(this.user,'จุดพลุ "'+FWMSG[fi].t+'" 🎆')}
+  else if(w.a==='fw'){const fi=(num(w.kt,1,3,1)|0)-1;textFirework(fi,V(x,0,z),false,!!w.o);if(!w.o&&this.peer===HH.peer&&player&&!player.steps.length&&!wishOpen){toast(this.user+' จุดพลุแล้ว จุดคู่กันเลย!');openFw(this.user)}feedAdd(this.user,'จุดพลุ "'+FWMSG[fi].t+'" 🎆')}
   else if(w.a==='photo'){const f=glow(0xffffff,6,1,false);f.position.set(16,1.6,-5.6);scene.add(f);PS.push({flash:f,t:0,life:.45});feedAdd(this.user,'ถ่ายรูปที่ Photobooth 📸')}
-  else if(w.a==='lantern'){kp();releaseLantern(makeLantern(),V(x,2.2,z));sfx('whoosh');this.say(t||'ปล่อยโคม',8);feedAdd(this.user,'ปล่อยโคม'+(t?' · '+t:''))}
+  else if(w.a==='lantern'){kp();releaseLantern(makeLantern(),V(x,2.2,z));sfx('whoosh');this.say(t||'ปล่อยโคม',8);feedAdd(this.user,'ปล่อยโคม'+(t?' · '+t:''));
+   if(!w.pr&&this.peer===HH.peer&&player&&!player.steps.length&&!wishOpen){const nm=this.user;askWish('ปล่อยโคมคู่กับ '+nm+' 💕',wish=>pairLantern(wish,nm))}}
   else if(w.a==='pray'){this.say(t||'อธิษฐาน',8);sfx('chime');feedAdd(this.user,'อธิษฐาน'+(t?' · '+t:''))}
   updateStats()}
  update(dt){const s=this.st,p=this.g.position,tx=num(s.x,-45,45,p.x),tz=num(s.z,-40,18,p.z),dx=tx-p.x,dz=tz-p.z,d=Math.hypot(dx,dz);let walking=false;
@@ -1103,7 +1108,7 @@ function openKChooser(cb){kCb=cb;wishOpen=true;tgt=null;const cur=store.get('kty
  $('#kGrid').querySelectorAll('.kcard').forEach(b=>b.onclick=()=>{const kt=+b.dataset.k;store.set('ktype',kt);closeKChooser();const f=kCb;kCb=null;f&&f(kt)});
  $('#kBox').classList.remove('hidden')}
 function closeKChooser(){$('#kBox').classList.add('hidden');wishOpen=false}
-document.querySelectorAll('#fwBox [data-fw]').forEach(b=>b.onclick=()=>launchFw(+b.dataset.fw));$('#fwNo').onclick=closeFw;
+document.querySelectorAll('#fwBox [data-fw]').forEach(b=>b.onclick=()=>launchFw(+b.dataset.fw));$('#fwNo').onclick=()=>{fwPair=null;closeFw()};
 $('#hhBtn').onclick=e=>{e.currentTarget.blur();inviteHands()};$('#invYes').onclick=()=>answerInvite(true);$('#invNo').onclick=()=>answerInvite(false);
 $('#kNo').onclick=()=>{kCb=null;closeKChooser()};
 /* ---------- chat ---------- */
@@ -1202,10 +1207,10 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
  for(let i=SL.length-1;i>=0;i--){const l=SL[i];l.o.position.y+=l.vy*dt;l.o.position.x+=(l.vx+Math.sin(T*.5+l.ph)*.2)*dt;l.o.position.z+=.25*dt;if(l.o.position.y>95){scene.remove(l.o);SL.splice(i,1)}}
  for(let i=PS.length-1;i>=0;i--){const p=PS[i];p.t+=dt;
   if(p.flash){p.flash.material.opacity=Math.max(0,.9*(1-p.t/p.life));if(p.t>p.life){scene.remove(p.flash);PS.splice(i,1)}continue}
-  if(p.rocket){const u=Math.min(1,p.t/p.life),e=1-(1-u)*(1-u);p.rocket.position.set(p.from.x+(FWP.x-p.from.x)*e+Math.sin(p.t*30)*.08,p.from.y+(FWP.y-p.from.y)*u,p.from.z+(FWP.z-p.from.z)*e);
+  if(p.rocket){const u=Math.min(1,p.t/p.life),e=1-(1-u)*(1-u);p.rocket.position.set(p.from.x+(p.c.x-p.from.x)*e+Math.sin(p.t*30)*.08,p.from.y+(p.c.y-p.from.y)*u,p.from.z+(p.c.z-p.from.z)*e);
    if(u>=1){scene.remove(p.rocket);PS.splice(i,1);p.cb()}continue}
   if(p.txt){const a=p.txt.geometry.attributes.position.array,tg=p.tg,n=tg.length/2,u=Math.min(1,p.t/1),e=1-Math.pow(1-u,3),fall=p.t>5?(p.t-5)*(p.t-5)*2.2:0;
-   for(let k=0;k<n;k++){const j=p.jit[k];a[k*3]=FWP.x+tg[k*2]*e;a[k*3+1]=FWP.y+tg[k*2+1]*e-fall*(.6+j);a[k*3+2]=FWP.z+(j-.5)*.4}
+   for(let k=0;k<n;k++){const j=p.jit[k];a[k*3]=p.c.x+tg[k*2]*e;a[k*3+1]=p.c.y+tg[k*2+1]*e-fall*(.6+j);a[k*3+2]=p.c.z+(j-.5)*.4}
    p.txt.geometry.attributes.position.needsUpdate=true;p.txt.material.size=.9+Math.sin(p.t*18)*.12;p.txt.material.opacity=(p.t<5?1:Math.max(0,1-(p.t-5)/2))*.8;
    if(p.t>p.life){scene.remove(p.txt);p.txt.geometry.dispose();p.txt.material.dispose();PS.splice(i,1)}continue}
   const a=p.pts.geometry.attributes.position.array,v=p.v;for(let j=0;j<v.length;j+=3){v[j]*=p.drag;v[j+1]=v[j+1]*p.drag-p.grav*dt;v[j+2]*=p.drag;
