@@ -72,7 +72,7 @@ const OPENAPI = {
     '/api/wishes': { get: { summary: 'คำอธิษฐานล่าสุด', tags: ['อ่านข้อมูล'], parameters: [{ name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 100, default: 20 } }],
       responses: { '200': { description: 'OK', content: { 'application/json': { schema: { type: 'array', items: wishSchema } } } } } } },
     '/api/events': { get: { summary: 'ฟังเหตุการณ์แบบเรียลไทม์ (Server-Sent Events)', tags: ['เรียลไทม์'],
-      description: 'เหตุการณ์: join, leave, float, lantern, pray, dress, photo, chat, command, gift, fx — ข้อมูลเป็น JSON ในบรรทัด data:',
+      description: 'เหตุการณ์: join, leave, float, lantern, pray, dress, photo, firework, chat, command, gift, fx — ข้อมูลเป็น JSON ในบรรทัด data:',
       responses: { '200': { description: 'สตรีม text/event-stream', content: { 'text/event-stream': { schema: { type: 'string' } } } } } } },
     '/api/command': { post: { summary: 'ส่งคำสั่งเหมือนคอมเมนต์ในแชต', tags: ['สั่งเกม'], security: [{ apiKey: [] }],
       description: 'ข้อความใช้รูปแบบเดียวกับแชต เช่น "ลอยกระทง ขอให้สอบผ่าน", "ปล่อยโคม", "เที่ยวงาน", "อธิษฐาน ..." — ทุกหน้าเกมจะมีตัวละครชื่อนี้เดินมาทำกิจกรรม',
@@ -188,6 +188,7 @@ function track(me, pres) {
     emit(w.a, item); if (w.a !== 'pray') pushTotals();
   }
   if (w && typeof w === 'object' && w.a === 'photo' && w.i !== me.lastPhoto) { me.lastPhoto = w.i; emit('photo', { name }); }
+  if (w && typeof w === 'object' && w.a === 'fw' && w.i !== me.lastFw) { me.lastFw = w.i; const t = ['Love you', 'Stay healthy', 'Good luck'][(num(w.kt, 1, 3, 1) | 0) - 1]; emit('firework', { name, text: t }); }
   const m = pres.m;
   if (m && typeof m === 'object' && m.i !== me.lastMsg) { me.lastMsg = m.i; const t = clean(m.t, 60); if (t) emit('chat', { name, text: t, to: clean(m.to, 18) }); }
 }
@@ -205,7 +206,7 @@ wss.on('connection', ws => {
     if (++me.count > MAX_MSG_PER_SEC) return;
     let m; try { m = JSON.parse(buf.toString()); } catch (e) { return; }
     if (!m || m.t !== 'p' || !m.presence || typeof m.presence !== 'object' || Array.isArray(m.presence)) return;
-    if (!me.seen) { me.seen = true; me.lastAct = m.presence.w && m.presence.w.i; me.outfit = /^[fm][1-5]$/.test(m.presence.o || '') ? m.presence.o : ''; me.lastMsg = m.presence.m && m.presence.m.i; me.lastPhoto = m.presence.w && m.presence.w.i; } // ไม่นับซ้ำเมื่อต่อใหม่
+    if (!me.seen) { me.seen = true; me.lastAct = m.presence.w && m.presence.w.i; me.outfit = /^[fm][1-5]$/.test(m.presence.o || '') ? m.presence.o : ''; me.lastMsg = m.presence.m && m.presence.m.i; me.lastPhoto = m.presence.w && m.presence.w.i; me.lastFw = me.lastPhoto; } // ไม่นับซ้ำเมื่อต่อใหม่
     me.presence = m.presence; track(me, m.presence);
     broadcast({ t: 'p', id: me.id, presence: me.presence }, ws);
   });

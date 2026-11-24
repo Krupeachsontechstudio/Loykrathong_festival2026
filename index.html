@@ -125,6 +125,10 @@ body.editing #pInput input,body.editing #pInput button{pointer-events:none}
 @media(max-width:640px){.kgrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:640px) and (orientation:portrait),(max-width:420px){#hiBtn{left:auto;transform:none;right:calc(8px + var(--sr));bottom:calc(184px + var(--sb));font-size:13px}}
 @media(max-height:520px) and (orientation:landscape){#hiBtn{left:auto;transform:none;right:calc(14px + var(--sr));bottom:calc(62px + var(--sb));font-size:13px}}
+.fwgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.fwgrid button{background:#140a2e;border:2px solid rgba(246,200,106,.5);font:700 20px/1.2 Mitr,Arial,sans-serif;min-height:64px;text-shadow:0 0 12px currentColor}
+@media(max-width:480px){.fwgrid{grid-template-columns:1fr}}
+#fwBox{width:min(560px,calc(100% - 24px))}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.chips button{font-size:14px;min-height:36px;padding:4px 10px;background:rgba(255,255,255,.1)}
 .wrow{display:flex;gap:8px;justify-content:flex-end}
 body.playing #c{cursor:pointer}
@@ -205,6 +209,7 @@ button,.cmd,.wcard{touch-action:manipulation;-webkit-tap-highlight-color:transpa
     <div class="cmd" data-act="explore" role="button" tabindex="0" title="เดินชมงาน แวะร้านค้า"><svg viewBox="0 0 40 40"><path d="M5 17L20 6l15 11z" fill="#e0457f"/><path d="M5 17h30v3H5z" fill="#f6c86a"/><rect x="8" y="20" width="2" height="14" fill="#7a4a2a"/><rect x="30" y="20" width="2" height="14" fill="#7a4a2a"/><rect x="11" y="25" width="18" height="5" rx="1" fill="#ffd9a0"/></svg><div><b>เที่ยวงาน</b><small>เดินชมงาน แวะร้านค้า</small></div></div>
     <div class="cmd" data-act="dress" role="button" tabindex="0" title="แต่งชุดไทย 5 เซต ทุกคนเห็นชุดคุณ"><svg viewBox="0 0 40 40"><path d="M20 6a3 3 0 1 1 3 3l-3 2-14 9h28l-14-9" fill="none" stroke="#b07a1a" stroke-width="2"/><path d="M12 20h16l3 15H9z" fill="#9b3fb8"/><path d="M12 24h16M11 29h18" stroke="#f6c86a" stroke-width="2"/></svg><div><b>เช่าชุดไทย</b><small>แต่งชุดไทย 5 เซต ทุกคนเห็นชุดคุณ</small></div></div>
     <div class="cmd" data-act="photo" role="button" tabindex="0" title="ถ่ายรูปคู่หรือเดี่ยว ได้รูป Happy Loy Krathong Day"><svg viewBox="0 0 40 40"><rect x="5" y="12" width="30" height="21" rx="4" fill="#e0508f"/><rect x="14" y="8" width="12" height="6" rx="2" fill="#e0508f"/><circle cx="20" cy="22.5" r="6.5" fill="#fff0f6"/><circle cx="20" cy="22.5" r="3.8" fill="#7a2f8f"/></svg><div><b>ถ่ายรูป</b><small>Photobooth ถ่ายรูปคู่หรือเดี่ยว</small></div></div>
+    <div class="cmd" data-act="fw" role="button" tabindex="0" title="จุดพลุเป็นตัวอักษร Love you, Stay healthy, Good luck"><svg viewBox="0 0 40 40"><g stroke-width="2.4" stroke-linecap="round"><path d="M20 20L20 5M20 20L31 9M20 20L35 20M20 20L31 31M20 20L9 31M20 20L5 20M20 20L9 9" stroke="#ff6fae"/><path d="M20 20L26 6M20 20L34 26M20 20L14 34M20 20L6 14" stroke="#ffd34d"/></g><circle cx="20" cy="20" r="3.5" fill="#fff6b0"/></svg><div><b>จุดพลุ</b><small>พลุตัวอักษรกลางฟ้า</small></div></div>
     <div class="cmd" data-act="pray" role="button" tabindex="0" title="ไหว้ขอพร ตั้งจิตอธิษฐาน"><svg viewBox="0 0 40 40"><path d="M20 4c-3 6-6 14-6 24h12c0-10-3-18-6-24z" fill="#f8d5bd" stroke="#c98d6e"/><path d="M20 6v22" stroke="#c98d6e"/><rect x="12" y="28" width="16" height="7" rx="3" fill="#f6c86a"/></svg><div><b>อธิษฐาน</b><small>ไหว้ขอพร ตั้งจิตอธิษฐาน</small></div></div>
   </div>
 
@@ -291,6 +296,12 @@ button,.cmd,.wcard{touch-action:manipulation;-webkit-tap-highlight-color:transpa
   <div id="phResult" class="hidden"><img id="phImg" alt="รูปจาก Photobooth"><p class="sub" id="phNote" style="margin:0 0 8px"></p>
    <div class="wrow"><button type="button" id="phAgain">ถ่ายใหม่</button><button type="button" id="phShare">แชร์</button><a id="phSave" class="goldbtn btnlike" download="happy-loykrathong-day.jpg" href="#">บันทึกรูป</a><button type="button" id="phDone">ปิด</button></div></div>
   <div id="phCd" class="hidden"></div>
+</div>
+<div class="wbox hidden" id="fwBox" role="dialog" aria-label="จุดพลุ">
+  <h3>จุดพลุตัวอักษร</h3>
+  <p style="margin:0 0 10px;color:#e8dcff;font-size:14px">เลือกข้อความ พลุจะระเบิดเป็นตัวอักษรกลางฟ้า ทุกคนในงานเห็นพร้อมกัน</p>
+  <div class="fwgrid"><button type="button" data-fw="0" style="color:#ff8fc4">Love you</button><button type="button" data-fw="1" style="color:#8dffb4">Stay healthy</button><button type="button" data-fw="2" style="color:#ffe07a">Good luck</button></div>
+  <div class="wrow"><button type="button" id="fwNo">ยกเลิก</button></div>
 </div>
 <form class="wbox hidden" id="wishBox">
   <h3 id="wishTitle">คำอธิษฐาน</h3>
@@ -660,7 +671,7 @@ class Actor{
 }
 /* ---------- your own character ---------- */
 let player=null,playMode=false,camYaw=0,tgt=null,wishOpen=false;const keys={},joy={x:0,y:0};
-const OBST=[...STALLS.map(v=>[v.x-1.8,v.x+1.8,-5.6,-2.9]),[-7.9,-4.1,4.9,7.5],[-16.1,-15,-3.8,-2.6],[-11,-9.9,-3.8,-2.6],[14,18,-8.6,-5.1]];
+const OBST=[...STALLS.map(v=>[v.x-1.8,v.x+1.8,-5.6,-2.9]),[-7.9,-4.1,4.9,7.5],[-16.1,-15,-3.8,-2.6],[-11,-9.9,-3.8,-2.6],[14,18,-8.6,-5.1],[6,8,5.1,6.9]];
 function walkable(x,z){if(x<-45||x>45||z<-40)return false;if(z>7.1&&!isPier(x,z))return false;for(const o of OBST)if(x>o[0]&&x<o[1]&&z>o[2]&&z<o[3])return false;return true}
 class Player extends Actor{
  constructor(name){super({type:'player',viewer:true,me:true,user:name,seed:mySeed,from:V(rnd(-2,2),0,rnd(-3.5,-1.5))});this.spd=3.6;this.face=0;const so=store.get('outfit','');if(so)this.dress(so)}
@@ -690,7 +701,7 @@ function findPath(a,b){if(!grid){grid=new Uint8Array(GW*GH);for(let j=0;j<GH;j++
  const pts=[];for(let c=t;c!==s;c=prev[c])pts.push(V(GX0+(c%GW)*GS,0,GZ0+((c/GW)|0)*GS));pts.reverse();if(!pts.length)return[V(b.x,0,b.z)];
  const out=[];let cur=V(a.x,0,a.z),k=0;while(k<pts.length){let far=k;for(let m=pts.length-1;m>k;m--)if(los(cur,pts[m])){far=m;break}out.push(pts[far]);cur=pts[far];k=far+1}
  out[out.length-1]=V(b.x,0,b.z);return out}
-const DEST={photo:V(16,0,-4.3),dress:V(-13,0,-1.5),pier:V(0,0,16.6),stall:V(-8,0,-1.5),lantern:V(13,0,0),shrine:V(-6,0,4.3),market:V(-18,0,-1.5)};
+const DEST={fw:V(7,0,4.4),photo:V(16,0,-4.3),dress:V(-13,0,-1.5),pier:V(0,0,16.6),stall:V(-8,0,-1.5),lantern:V(13,0,0),shrine:V(-6,0,4.3),market:V(-18,0,-1.5)};
 function goTo(d,then){if(!player||player.steps.length||wishOpen)return;tgt=null;player.route=findPath(player.g.position,d);player.onArrive=then||null}
 const walkingTo=()=>player&&(tgt||(player.route&&player.route.length));
 function goFloat(){if(!player||player.steps.length||wishOpen)return;audioInit();const k=player.prop&&player.prop.userData.kind;
@@ -699,11 +710,12 @@ function goFloat(){if(!player||player.steps.length||wishOpen)return;audioInit();
 function cardAct(act){if(document.body.classList.contains('editing'))return;audioInit();
  if(!playMode){openJoin();return}
  if(act==='krathong')goFloat();else if(act==='lantern'){if(player.prop){toast('ลอยกระทงในมือก่อน แล้วค่อยไปปล่อยโคม');return}goTo(DEST.lantern,()=>doAct())}
- else if(act==='pray')goTo(DEST.shrine,()=>doAct());else if(act==='dress')goTo(DEST.dress,()=>openWardrobe());else if(act==='photo')goTo(DEST.photo,()=>openPhoto());else goTo(DEST.market)}
+ else if(act==='pray')goTo(DEST.shrine,()=>doAct());else if(act==='dress')goTo(DEST.dress,()=>openWardrobe());else if(act==='photo')goTo(DEST.photo,()=>openPhoto());else if(act==='fw')goTo(DEST.fw,()=>openFw());else goTo(DEST.market)}
 function ctxAct(){if(!player||player.steps.length||wishOpen)return null;const p=player.g.position,k=player.prop&&player.prop.userData.kind;
  if(k==='k'&&isPier(p.x,p.z)&&p.z>15.4)return['float','ลอยกระทง'];
  if(Math.hypot(p.x+13,p.z+1.5)<2.2)return['dress','เช่าชุดไทย'];
  if(!k&&Math.hypot(p.x-STALLS[0].x,p.z-STALLS[0].z)<2.4)return['take','เลือกกระทง'];
+ if(Math.hypot(p.x-7,p.z-4.4)<1.8)return['fw','จุดพลุ'];
  if(Math.hypot(p.x-16,p.z+4.3)<2)return['photo','ถ่ายรูป Photobooth'];
  if(!k&&p.x>9&&p.x<18&&p.z>-4&&p.z<3.5)return['lantern','ปล่อยโคม'];
  if(Math.hypot(p.x+6,p.z-4.3)<2)return['pray','อธิษฐาน'];return null}
@@ -714,6 +726,7 @@ function askWish(title,cb){wishOpen=true;tgt=null;$('#wishTitle').textContent=ti
 function closeWish(ok){$('#wishBox').classList.add('hidden');wishOpen=false;const w=cleanWish($('#wishIn').value);try{$('#wishIn').blur()}catch(e){}if(ok&&askWish.cb)askWish.cb(w);askWish.cb=null}
 function doAct(next){const c=ctxAct();if(!c)return;audioInit();const P=player;
  if(c[0]==='dress'){openWardrobe();return}
+ if(c[0]==='fw'){openFw();return}
  if(c[0]==='photo'){openPhoto();return}
  if(c[0]==='take'){P.face=Math.PI;openKChooser(kt=>{P.steps=[{wait:.6,start:a=>{a.hold(makeKrathong(false,kt));sfx('chime')},end:()=>{toast('ได้'+KT[kt-1].n+'แล้ว');if(typeof next==='function')setTimeout(next,0)}}]});return}
  if(c[0]==='photo'){openPhoto();return}
@@ -752,8 +765,31 @@ function signpost(x,z,items){const g=new THREE.Group();g.position.set(x,0,z);sce
   mk(G.box,bm,[1.56,.34,.06],[.9,0,0],b);const tp=mk(tipG,bm,[1,1,.25],[1.84,0,0],b);tp.rotation.z=-Math.PI/2;
   const tx=signTex(it.t,hex),mat=new THREE.MeshBasicMaterial({map:tx});
   const f=new THREE.Mesh(boardG,mat);f.position.set(.9,0,.035);b.add(f);const bk=new THREE.Mesh(boardG,mat);bk.position.set(.9,0,-.035);bk.rotation.y=Math.PI;b.add(bk)})}
-signpost(3.7,1.7,[{t:'ท่าน้ำลอยกระทง',to:V(0,0,16.6),c:0x2c5aa0},{t:'ร้านกระทง',to:V(-8,0,-1.5),c:0x2f7a3a},{t:'เช่าชุดไทย',to:V(-13,0,-1.5),c:0x7a3299},{t:'Photobooth',to:V(16,0,-4.3),c:0xd9408a},{t:'ลานโคมลอย',to:V(13,0,0),c:0xc8641a},{t:'ศาลาอธิษฐาน',to:V(-6,0,4.3),c:0x9e2130}]);
+signpost(3.7,1.7,[{t:'ท่าน้ำลอยกระทง',to:V(0,0,16.6),c:0x2c5aa0},{t:'ร้านกระทง',to:V(-8,0,-1.5),c:0x2f7a3a},{t:'เช่าชุดไทย',to:V(-13,0,-1.5),c:0x7a3299},{t:'Photobooth',to:V(16,0,-4.3),c:0xd9408a},{t:'ลานโคมลอย',to:V(13,0,0),c:0xc8641a},{t:'ศาลาอธิษฐาน',to:V(-6,0,4.3),c:0x9e2130},{t:'ลานจุดพลุ',to:V(7,0,5.8),c:0x2d6fd0}]);
 try{document.fonts.load('600 52px Mitr').then(()=>SIGNS.forEach(f=>f())).catch(()=>{})}catch(e){}
+/* ---------- firework launch pad (ลานจุดพลุ) ---------- */
+{const g=new THREE.Group();g.position.set(7,0,6);scene.add(g);mk(G.box,wood,[2,.2,1.8],[0,.1,0],g);
+ for(let i=0;i<6;i++){const tb=mk(G.cyl,M([0xff6fae,0xffd34d,0x6dd0ff][i%3],{emissive:0x221122}),[.11,.6,.11],[-.6+(i%3)*.6,.5,-.3+Math.floor(i/3)*.6],g);tb.rotation.x=-.12}
+ mk(G.box,M(0x7a2f8f,{emissive:0x1a0820}),[1.6,.5,.12],[0,.45,.85],g);at(glow(0xffd36b,2.2,.5),0,1,0,g);
+ const sg=nameTag('ลานจุดพลุ',false,true);sg.position.set(7,2.9,6);sg.scale.multiplyScalar(1.2);scene.add(sg)}
+const FWMSG=[{t:'Love you',c:0xff2f8a},{t:'Stay healthy',c:0x22ff66},{t:'Good luck',c:0xffbb11}];
+const FWP=V(0,25,42),fwTg={};let fwNext=0;
+function fwTargets(i){if(fwTg[i])return fwTg[i];const W=720,H=140,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+ g.fillStyle='#fff';g.font='700 96px Mitr, Arial, sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(FWMSG[i].t,W/2,H/2+4,W-40);
+ const d=g.getImageData(0,0,W,H).data,out=[];for(let y=0;y<H;y+=3)for(let x=0;x<W;x+=3)if(d[(y*W+x)*4+3]>110)out.push(-(x-W/2)*.052,-(y-H/2)*.052);
+ return fwTg[i]=new Float32Array(out)}
+function textFirework(i,from,mine){i=Math.max(0,Math.min(2,i|0));const rk=glow(FWMSG[i].c,1.4,1,false);rk.position.set(from.x,1,from.z);scene.add(rk);sfx('whoosh');
+ PS.push({rocket:rk,from:rk.position.clone(),t:0,life:1.2,cb:()=>{
+  const tg=fwTargets(i),n=tg.length/2,pos=new Float32Array(n*3);for(let k=0;k<n;k++){pos[k*3]=FWP.x;pos[k*3+1]=FWP.y;pos[k*3+2]=FWP.z}
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  const pts=new THREE.Points(geo,new THREE.PointsMaterial({color:FWMSG[i].c,size:.75,map:GT,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,fog:false,toneMapped:false}));scene.add(pts);
+  PS.push({txt:pts,tg,t:0,life:7,jit:Float32Array.from({length:n},()=>Math.random())});firework(FWP.x,FWP.y,FWP.z,FWMSG[i].c);
+  if(mine){const o=new THREE.Object3D();o.position.copy(FWP);scene.add(o);focus(o,[0,-19,-34],6.5,[0,0,0],3);setTimeout(()=>scene.remove(o),8000)}}})}
+function openFw(){if(!player)return;wishOpen=true;tgt=null;player.face=0;$('#fwBox').classList.remove('hidden')}
+function closeFw(){$('#fwBox').classList.add('hidden');wishOpen=false}
+function launchFw(i){closeFw();const now=performance.now();if(now<fwNext){toast('รอพลุลูกก่อนหน้าก่อนนะ');return}fwNext=now+7000;audioInit();
+ player.steps=[{wait:.9,start:a=>{a.face=0;a.pose='lift';a.say('จุดพลุ "'+FWMSG[i].t+'" 🎆',4)},end:a=>{a.pose=a.prop?'hold':'idle';const from=V(7,0,6);textFirework(i,from,true);
+  myAction('fw','',from,i+1);feedAdd(myName+' (คุณ)','จุดพลุ "'+FWMSG[i].t+'" 🎆')}}]}
 const SPK=p=>particles(70,0xffe6a0,(i,a,v)=>{a[i*3]=p.x+rnd(-.5,.5);a[i*3+1]=p.y+rnd(0,2);a[i*3+2]=p.z+rnd(-.5,.5);v[i*3]=rnd(-.6,.6);v[i*3+1]=rnd(.5,2);v[i*3+2]=rnd(-.6,.6)},{size:.3,life:1.6,grav:1,drag:.97});
 let wardG='f',showT=0,hidOcc=false,CD=7.2;
 function openWardrobe(){if(!player)return;wishOpen=true;tgt=null;player.face=0;const cur=player.o||'';if(cur)wardG=cur[0];renderWard();$('#wardBox').classList.remove('hidden')}
@@ -788,7 +824,7 @@ let myMsg=null,chatNext=0,hiTarget=null,room,roomOn=false,mySeq=0,myAct=null,ses
 const mySeed=(()=>{let v=store.get('seed',0);if(!v){v=1+Math.floor(Math.random()*1e9);store.set('seed',v)}return v})();
 let myName=store.get('name','');
 const num=(v,a,b,d)=>{v=+v;return Number.isFinite(v)?Math.max(a,Math.min(b,v)):d};
-function myAction(a,wish,pos,kt){myAct={i:++mySeq,a,t:wish||'',x:+pos.x.toFixed(2),z:+pos.z.toFixed(2),kt:kt||0};if(a!=='photo')feedAdd(myName+' (คุณ)',(a==='float'&&kt?KT[kt-1].n:ACT[a==='float'?'krathong':a])+(wish?' · '+wish:''));lastPres=''}
+function myAction(a,wish,pos,kt){myAct={i:++mySeq,a,t:wish||'',x:+pos.x.toFixed(2),z:+pos.z.toFixed(2),kt:kt||0};if(a!=='photo'&&a!=='fw')feedAdd(myName+' (คุณ)',(a==='float'&&kt?KT[kt-1].n:ACT[a==='float'?'krathong':a])+(wish?' · '+wish:''));lastPres=''}
 function totals(){let k=0,l=0,ppl=0;
  if(roomOn&&room){for(const p of room.peers()){const s=p.presence||{};if(!s.nm)continue;ppl++;if(p.sameTab)continue;k+=num(s.n,0,9999,0);l+=num(s.l,0,9999,0)}if(player&&!room.peers().some(p=>p.sameTab&&p.presence&&p.presence.nm))ppl++}
  else ppl=player?1:0;
@@ -799,6 +835,7 @@ class Remote extends Actor{
  set(s){this.st=s;this.face=num(s.f,-7,7,0);const mm=s.m;if(mm&&typeof mm==='object'&&mm.i!==this.lastM){this.lastM=mm.i;const t=cleanWish(String(mm.t||''));if(t){this.say(t,6);feedAdd(this.user,'💬 '+t);sfx('pop');if(mm.to&&myName&&String(mm.to)===myName)toast(this.user+' ทักทายคุณ 👋 — ทักกลับได้เลย')}}const w=s.w;if(w&&typeof w==='object'&&w.i!==this.lastI){this.lastI=w.i;this.play(w)}}
  play(w){const x=num(w.x,-45,45,0),z=num(w.z,-40,40,0),t=cleanWish(String(w.t||''));const kp=()=>{if(this.prop){this.g.remove(this.prop);this.prop=null}};
   if(w.a==='float'){kp();const kt=num(w.kt,1,5,1)|0;floatKrathong(makeKrathong(false,kt),V(x,-.2,Math.max(z,18.2)));sfx('splash');this.say(t||'ลอยกระทง',8);feedAdd(this.user,KT[kt-1].n+(t?' · '+t:''))}
+  else if(w.a==='fw'){const fi=(num(w.kt,1,3,1)|0)-1;textFirework(fi,V(x,0,z),false);feedAdd(this.user,'จุดพลุ "'+FWMSG[fi].t+'" 🎆')}
   else if(w.a==='photo'){const f=glow(0xffffff,6,1,false);f.position.set(16,1.6,-5.6);scene.add(f);PS.push({flash:f,t:0,life:.45});feedAdd(this.user,'ถ่ายรูปที่ Photobooth 📸')}
   else if(w.a==='lantern'){kp();releaseLantern(makeLantern(),V(x,2.2,z));sfx('whoosh');this.say(t||'ปล่อยโคม',8);feedAdd(this.user,'ปล่อยโคม'+(t?' · '+t:''))}
   else if(w.a==='pray'){this.say(t||'อธิษฐาน',8);sfx('chime');feedAdd(this.user,'อธิษฐาน'+(t?' · '+t:''))}
@@ -1027,6 +1064,7 @@ function openKChooser(cb){kCb=cb;wishOpen=true;tgt=null;const cur=store.get('kty
  $('#kGrid').querySelectorAll('.kcard').forEach(b=>b.onclick=()=>{const kt=+b.dataset.k;store.set('ktype',kt);closeKChooser();const f=kCb;kCb=null;f&&f(kt)});
  $('#kBox').classList.remove('hidden')}
 function closeKChooser(){$('#kBox').classList.add('hidden');wishOpen=false}
+document.querySelectorAll('#fwBox [data-fw]').forEach(b=>b.onclick=()=>launchFw(+b.dataset.fw));$('#fwNo').onclick=closeFw;
 $('#kNo').onclick=()=>{kCb=null;closeKChooser()};
 /* ---------- chat ---------- */
 $('#bChat').onclick=e=>{e.currentTarget.blur();openChat()};$('#chatNo').onclick=closeChat;$('#hiBtn').onclick=e=>{e.currentTarget.blur();sayHi()};
@@ -1124,6 +1162,12 @@ function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.
  for(let i=SL.length-1;i>=0;i--){const l=SL[i];l.o.position.y+=l.vy*dt;l.o.position.x+=(l.vx+Math.sin(T*.5+l.ph)*.2)*dt;l.o.position.z+=.25*dt;if(l.o.position.y>95){scene.remove(l.o);SL.splice(i,1)}}
  for(let i=PS.length-1;i>=0;i--){const p=PS[i];p.t+=dt;
   if(p.flash){p.flash.material.opacity=Math.max(0,.9*(1-p.t/p.life));if(p.t>p.life){scene.remove(p.flash);PS.splice(i,1)}continue}
+  if(p.rocket){const u=Math.min(1,p.t/p.life),e=1-(1-u)*(1-u);p.rocket.position.set(p.from.x+(FWP.x-p.from.x)*e+Math.sin(p.t*30)*.08,p.from.y+(FWP.y-p.from.y)*u,p.from.z+(FWP.z-p.from.z)*e);
+   if(u>=1){scene.remove(p.rocket);PS.splice(i,1);p.cb()}continue}
+  if(p.txt){const a=p.txt.geometry.attributes.position.array,tg=p.tg,n=tg.length/2,u=Math.min(1,p.t/1),e=1-Math.pow(1-u,3),fall=p.t>5?(p.t-5)*(p.t-5)*2.2:0;
+   for(let k=0;k<n;k++){const j=p.jit[k];a[k*3]=FWP.x+tg[k*2]*e;a[k*3+1]=FWP.y+tg[k*2+1]*e-fall*(.6+j);a[k*3+2]=FWP.z+(j-.5)*.4}
+   p.txt.geometry.attributes.position.needsUpdate=true;p.txt.material.size=.9+Math.sin(p.t*18)*.12;p.txt.material.opacity=(p.t<5?1:Math.max(0,1-(p.t-5)/2))*.8;
+   if(p.t>p.life){scene.remove(p.txt);p.txt.geometry.dispose();p.txt.material.dispose();PS.splice(i,1)}continue}
   const a=p.pts.geometry.attributes.position.array,v=p.v;for(let j=0;j<v.length;j+=3){v[j]*=p.drag;v[j+1]=v[j+1]*p.drag-p.grav*dt;v[j+2]*=p.drag;
    a[j]+=v[j]*dt+(p.sway?Math.sin(T*2+j)*p.sway*dt:0);a[j+1]+=v[j+1]*dt;a[j+2]+=v[j+2]*dt}
   p.pts.geometry.attributes.position.needsUpdate=true;p.pts.material.opacity=Math.max(0,1-Math.pow(p.t/p.life,2));
